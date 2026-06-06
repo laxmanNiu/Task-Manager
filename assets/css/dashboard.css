@@ -1,0 +1,225 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f1f3f5;
+}
+
+/* LAYOUT */
+.app-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 220px;
+    background: #111827;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar a {
+    display: block;
+    color: #bbb;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 5px;
+}
+
+.sidebar a.active,
+.sidebar a:hover {
+    background: #374151;
+    color: white;
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    padding: 20px;
+}
+
+/* ADD BUTTON */
+.add-task button {
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+/* CARDS */
+.cards {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    flex: 1;
+}
+
+/* BOARD */
+.task-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+/* TASK CARD */
+.task {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+/* STATUS */
+.status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    display: inline-block;
+}
+
+.pending {
+    background: orange;
+}
+
+.completed {
+    background: green;
+    color: white;
+}
+
+/* BUTTONS */
+button {
+    margin-top: 8px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+.board {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.column {
+    flex: 1;
+    background: #e5e7eb;
+    padding: 10px;
+    border-radius: 10px;
+    min-height: 400px;
+}
+
+.column h3 {
+    text-align: center;
+}
+
+.task {
+    background: white;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    cursor: grab;
+}
+.task {
+    background: white;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    cursor: grab;
+    transition: 0.2s;
+}
+
+.task:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+.column {
+    flex: 1;
+    background: #e5e7eb;
+    padding: 10px;
+    border-radius: 10px;
+    min-height: 400px;
+    transition: 0.2s;
+}
+
+.column.drag-over {
+    background: #dbeafe;
+    border: 2px dashed #3b82f6;
+}
+body.dark {
+    background: #111827;
+    color: white;
+}
+
+body.dark .main {
+    background: #1f2937;
+}
+
+body.dark .card,
+body.dark .task {
+    background: #374151;
+    color: white;
+}
+
+body.dark .column {
+    background: #1f2937;
+}
+.search-bar {
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+.priority {
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-left: 5px;
+}
+
+.high {
+    background: #ef4444;
+    color: white;
+}
+
+.medium {
+    background: #f59e0b;
+    color: white;
+}
+
+.low {
+    background: #22c55e;
+    color: white;
+}

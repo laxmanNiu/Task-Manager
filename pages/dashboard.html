@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TaskFlow Dashboard</title>
+
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>TaskFlow</h2>
+
+        <a class="active" href="#">Dashboard</a>
+        <a href="#">Tasks</a>
+        <a href="#">Calendar</a>
+        <a href="#">Analytics</a>
+        <a href="#">Profile</a>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <div class="topbar">
+    <h2>Dashboard</h2>
+
+    <!-- SEARCH BAR -->
+    <input type="text" id="searchInput" class="search-bar" placeholder="Search tasks...">
+
+    <!-- DARK MODE BUTTON -->
+    <button id="darkModeBtn">🌙 Dark Mode</button>
+</div>
+
+        <!-- ADD BUTTON -->
+        <div class="add-task">
+            <button id="saveTaskBtn">+ Add Task</button>
+        </div>
+
+        <!-- CARDS -->
+        <div class="cards">
+            <div class="card">
+                <h3>Total</h3>
+                <p>0</p>
+            </div>
+
+            <div class="card">
+                <h3>Completed</h3>
+                <p>0</p>
+            </div>
+
+            <div class="card">
+                <h3>Pending</h3>
+                <p>0</p>
+            </div>
+        </div>
+
+        <!-- BOARD -->
+    <div class="board">
+
+    <div class="column" id="pending">
+        <h3>Pending</h3>
+    </div>
+
+    <div class="column" id="progress">
+        <h3>In Progress</h3>
+    </div>
+
+    <div class="column" id="completed">
+        <h3>Completed</h3>
+    </div>
+
+</div>
+
+    </div>
+</div>
+
+<!-- MODAL -->
+<div id="taskModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>Add New Task</h2>
+
+        <input type="text" id="modalTaskInput" placeholder="Enter task...">
+
+        <div class="modal-actions">
+            <button id="addTaskConfirm">Add</button>
+            <button id="closeModalBtn">Cancel</button>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="../assets/js/dashboard.js"></script>
+
+</body>
+</html>
