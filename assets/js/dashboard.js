@@ -4,45 +4,59 @@ const modalTaskInput = document.getElementById("modalTaskInput");
 const addTaskConfirm = document.getElementById("addTaskConfirm");
 const closeModalBtn = document.getElementById("closeModalBtn");
 
-const darkModeBtn = document.getElementById("darkModeBtn");
 const searchInput = document.getElementById("searchInput");
+const darkModeBtn = document.getElementById("darkModeBtn");
+const prioritySelect = document.getElementById("prioritySelect");
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-/* ---------- STORAGE ---------- */
+/* SAVE */
 function saveTasks() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-/* ---------- SYNC ---------- */
+/* SYNC */
 function sync() {
     saveTasks();
     renderBoard();
     updateCards();
 }
 
-/* ---------- DARK MODE ---------- */
+/* VIEW SWITCH */
+function showView(view) {
+
+    document.getElementById("dashboardView").style.display =
+        view === "dashboard" ? "block" : "none";
+
+    document.getElementById("analyticsView").style.display =
+        view === "analytics" ? "block" : "none";
+
+    if (view === "analytics") renderChart();
+}
+
+/* DARK MODE */
 darkModeBtn?.addEventListener("click", () => {
     document.body.classList.toggle("dark");
 });
 
-/* ---------- SEARCH ---------- */
+/* SEARCH */
 searchInput?.addEventListener("input", (e) => {
 
     const value = e.target.value.toLowerCase();
 
-    const filtered = tasks.filter(task =>
-        task.name.toLowerCase().includes(value)
+    const filtered = tasks.filter(t =>
+        t.name.toLowerCase().includes(value)
     );
 
-    renderFiltered(filtered);
+    renderBoard(filtered);
 });
 
-/* ---------- MODAL ---------- */
+/* OPEN MODAL */
 openModalBtn.addEventListener("click", () => {
     taskModal.style.display = "flex";
 });
 
+/* CLOSE MODAL */
 closeModalBtn.addEventListener("click", () => {
     taskModal.style.display = "none";
 });
@@ -53,21 +67,18 @@ window.addEventListener("click", (e) => {
     }
 });
 
-/* ---------- ADD TASK ---------- */
+/* ADD TASK */
 addTaskConfirm.addEventListener("click", () => {
 
     const text = modalTaskInput.value.trim();
 
-    if (!text) {
-        alert("Enter task");
-        return;
-    }
+    if (!text) return;
 
-tasks.push({
-    name: text,
-    status: "Pending",
-    priority: "Medium"
-});
+    tasks.push({
+        name: text,
+        status: "Pending",
+        priority: prioritySelect.value
+    });
 
     modalTaskInput.value = "";
     taskModal.style.display = "none";
@@ -75,168 +86,99 @@ tasks.push({
     sync();
 });
 
-/* ---------- ACTIONS ---------- */
-function completeTask(index) {
-    tasks[index].status = "Completed";
+/* ACTIONS */
+function completeTask(i) {
+    tasks[i].status = "Completed";
     sync();
 }
 
-function editTask(index) {
-    const updated = prompt("Edit task:", tasks[index].name);
-
-    if (!updated || !updated.trim()) return;
-
-    tasks[index].name = updated.trim();
+function editTask(i) {
+    const v = prompt("Edit task", tasks[i].name);
+    if (!v) return;
+    tasks[i].name = v;
     sync();
 }
 
-function deleteTask(index) {
-    const ok = confirm("Delete task?");
-    if (!ok) return;
-
-    tasks.splice(index, 1);
+function deleteTask(i) {
+    tasks.splice(i, 1);
     sync();
 }
 
-/* ---------- RENDER BOARD (DEFAULT) ---------- */
-function renderBoard() {
+/* RENDER */
+function renderBoard(data = tasks) {
 
-    const pendingCol = document.getElementById("pending");
-    const progressCol = document.getElementById("progress");
-    const completedCol = document.getElementById("completed");
+    const pending = document.getElementById("pending");
+    const progress = document.getElementById("progress");
+    const completed = document.getElementById("completed");
 
-    pendingCol.innerHTML = "<h3>Pending</h3>";
-    progressCol.innerHTML = "<h3>In Progress</h3>";
-    completedCol.innerHTML = "<h3>Completed</h3>";
+    pending.innerHTML = "<h3>Pending</h3>";
+    progress.innerHTML = "<h3>In Progress</h3>";
+    completed.innerHTML = "<h3>Completed</h3>";
 
-    tasks.forEach((task, index) => {
+    data.forEach((t, i) => {
 
-        const card = document.createElement("div");
-        card.className = "task";
-        card.draggable = true;
+        const div = document.createElement("div");
+        div.className = "task";
 
-        card.innerHTML = `
-    <h4>${task.name}</h4>
+        div.innerHTML = `
+            <h4>${t.name}</h4>
+            <small>${t.status} | ${t.priority}</small>
+        `;
 
-    <small>
-        ${task.status}
-        <span class="priority ${task.priority.toLowerCase()}">
-            ${task.priority}
-        </span>
-    </small>
-`;
-
-        /* DRAG START */
-        card.addEventListener("dragstart", (e) => {
-            e.dataTransfer.setData("index", index);
-        });
-
-        placeTask(card, task.status, pendingCol, progressCol, completedCol);
-    });
-
-    enableDropZones();
-}
-
-/* ---------- SEARCH RENDER ---------- */
-function renderFiltered(filteredTasks) {
-
-    const pendingCol = document.getElementById("pending");
-    const progressCol = document.getElementById("progress");
-    const completedCol = document.getElementById("completed");
-
-    pendingCol.innerHTML = "<h3>Pending</h3>";
-    progressCol.innerHTML = "<h3>In Progress</h3>";
-    completedCol.innerHTML = "<h3>Completed</h3>";
-
-    filteredTasks.forEach((task) => {
-
-        const card = document.createElement("div");
-        card.className = "task";
-
-        card.innerHTML = `
-    <h4>${task.name}</h4>
-
-    <small>
-        ${task.status}
-        <span class="priority ${task.priority.toLowerCase()}">
-            ${task.priority}
-        </span>
-    </small>
-`;
-
-        placeTask(card, task.status, pendingCol, progressCol, completedCol);
+        if (t.status === "Pending") pending.appendChild(div);
+        if (t.status === "In Progress") progress.appendChild(div);
+        if (t.status === "Completed") completed.appendChild(div);
     });
 }
 
-/* ---------- HELPER ---------- */
-function placeTask(card, status, pendingCol, progressCol, completedCol) {
-
-    if (status === "Pending") {
-        pendingCol.appendChild(card);
-    }
-    else if (status === "In Progress") {
-        progressCol.appendChild(card);
-    }
-    else {
-        completedCol.appendChild(card);
-    }
-}
-
-/* ---------- DRAG & DROP ---------- */
-function enableDropZones() {
-
-    const columns = document.querySelectorAll(".column");
-
-    columns.forEach(col => {
-
-        col.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            col.classList.add("drag-over");
-        });
-
-        col.addEventListener("dragleave", () => {
-            col.classList.remove("drag-over");
-        });
-
-        col.addEventListener("drop", (e) => {
-
-            col.classList.remove("drag-over");
-
-            const index = e.dataTransfer.getData("index");
-
-            if (col.id === "pending") {
-                tasks[index].status = "Pending";
-            }
-
-            if (col.id === "progress") {
-                tasks[index].status = "In Progress";
-            }
-
-            if (col.id === "completed") {
-                tasks[index].status = "Completed";
-            }
-
-            sync();
-        });
-    });
-}
-
-/* ---------- CARDS ---------- */
+/* CARDS */
 function updateCards() {
 
     const total = tasks.length;
     const completed = tasks.filter(t => t.status === "Completed").length;
     const pending = tasks.filter(t => t.status === "Pending").length;
-    const progress = tasks.filter(t => t.status === "In Progress").length;
 
     const cards = document.querySelectorAll(".card p");
 
-    if (cards.length >= 3) {
-        cards[0].textContent = total;
-        cards[1].textContent = completed;
-        cards[2].textContent = pending;
-    }
+    cards[0].textContent = total;
+    cards[1].textContent = completed;
+    cards[2].textContent = pending;
 }
 
-/* ---------- INIT ---------- */
+/* EXPORT */
+function exportTasks() {
+
+    const blob = new Blob([JSON.stringify(tasks, null, 2)], {
+        type: "application/json"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "tasks.json";
+    a.click();
+}
+
+/* CHART */
+function renderChart() {
+
+    const ctx = document.getElementById("taskChart");
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: ["Pending", "Completed"],
+            datasets: [{
+                label: "Tasks",
+                data: [
+                    tasks.filter(t => t.status === "Pending").length,
+                    tasks.filter(t => t.status === "Completed").length
+                ]
+            }]
+        }
+    });
+}
+
+/* INIT */
 sync();

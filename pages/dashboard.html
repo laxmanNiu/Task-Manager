@@ -2,9 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TaskFlow Dashboard</title>
+    <title>TaskFlow SaaS Dashboard</title>
 
     <link rel="stylesheet" href="../assets/css/dashboard.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -15,77 +18,66 @@
     <div class="sidebar">
         <h2>TaskFlow</h2>
 
-        <a class="active" href="#">Dashboard</a>
-        <a href="#">Tasks</a>
-        <a href="#">Calendar</a>
-        <a href="#">Analytics</a>
-        <a href="#">Profile</a>
+        <a class="active" onclick="showView('dashboard')">Dashboard</a>
+        <a onclick="showView('analytics')">Analytics</a>
     </div>
 
     <!-- MAIN -->
     <div class="main">
 
-        <div class="topbar">
-    <h2>Dashboard</h2>
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboardView">
 
-    <!-- SEARCH BAR -->
-    <input type="text" id="searchInput" class="search-bar" placeholder="Search tasks...">
+            <div class="topbar">
+                <h2>Dashboard</h2>
 
-    <!-- DARK MODE BUTTON -->
-    <button id="darkModeBtn">🌙 Dark Mode</button>
-</div>
+                <input type="text" id="searchInput" placeholder="Search tasks...">
+                <button id="darkModeBtn">🌙</button>
+            </div>
 
-        <!-- ADD BUTTON -->
-        <div class="add-task">
-            <button id="saveTaskBtn">+ Add Task</button>
+            <div class="add-task">
+                <button id="saveTaskBtn">+ Add Task</button>
+                <button onclick="exportTasks()">Export</button>
+            </div>
+
+            <div class="cards">
+                <div class="card"><h3>Total</h3><p>0</p></div>
+                <div class="card"><h3>Completed</h3><p>0</p></div>
+                <div class="card"><h3>Pending</h3><p>0</p></div>
+            </div>
+
+            <div class="board">
+
+                <div class="column" id="pending"><h3>Pending</h3></div>
+                <div class="column" id="progress"><h3>In Progress</h3></div>
+                <div class="column" id="completed"><h3>Completed</h3></div>
+
+            </div>
+
         </div>
 
-        <!-- CARDS -->
-        <div class="cards">
-            <div class="card">
-                <h3>Total</h3>
-                <p>0</p>
-            </div>
-
-            <div class="card">
-                <h3>Completed</h3>
-                <p>0</p>
-            </div>
-
-            <div class="card">
-                <h3>Pending</h3>
-                <p>0</p>
-            </div>
+        <!-- ANALYTICS VIEW -->
+        <div id="analyticsView" style="display:none;">
+            <h2>Analytics</h2>
+            <canvas id="taskChart"></canvas>
         </div>
-
-        <!-- BOARD -->
-    <div class="board">
-
-    <div class="column" id="pending">
-        <h3>Pending</h3>
-    </div>
-
-    <div class="column" id="progress">
-        <h3>In Progress</h3>
-    </div>
-
-    <div class="column" id="completed">
-        <h3>Completed</h3>
-    </div>
-
-</div>
 
     </div>
 </div>
 
 <!-- MODAL -->
 <div id="taskModal" class="modal">
-
     <div class="modal-content">
 
-        <h2>Add New Task</h2>
+        <h2>Add Task</h2>
 
-        <input type="text" id="modalTaskInput" placeholder="Enter task...">
+        <input type="text" id="modalTaskInput" placeholder="Task name">
+
+        <select id="prioritySelect">
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+        </select>
 
         <div class="modal-actions">
             <button id="addTaskConfirm">Add</button>
@@ -93,7 +85,6 @@
         </div>
 
     </div>
-
 </div>
 
 <script src="../assets/js/dashboard.js"></script>
