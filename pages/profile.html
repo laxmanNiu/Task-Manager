@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow SaaS Dashboard</title>
+
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>TaskFlow</h2>
+
+        <a class="active" onclick="showView('dashboard')">Dashboard</a>
+        <a onclick="showView('analytics')">Analytics</a>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboardView">
+
+            <!-- TOPBAR -->
+            <div class="topbar">
+
+                <h2>Dashboard</h2>
+
+                <!-- USER -->
+                <span id="welcomeUser"></span>
+
+                <!-- SEARCH -->
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search tasks..."
+                >
+
+                <!-- DARK MODE -->
+                <button id="darkModeBtn">🌙</button>
+
+                <!-- LOGOUT -->
+                <button onclick="logout()">Logout</button>
+
+            </div>
+
+            <!-- ACTION BAR -->
+            <div class="add-task">
+
+                <button id="saveTaskBtn">+ Add Task</button>
+                <button onclick="exportTasks()">Export</button>
+
+            </div>
+
+            <!-- CARDS -->
+            <div class="cards">
+
+                <div class="card">
+                    <h3>Total</h3>
+                    <p>0</p>
+                </div>
+
+                <div class="card">
+                    <h3>Completed</h3>
+                    <p>0</p>
+                </div>
+
+                <div class="card">
+                    <h3>Pending</h3>
+                    <p>0</p>
+                </div>
+
+                <!-- PROGRESS CARD -->
+                <div class="card">
+                    <h3>Progress</h3>
+                    <p id="progressPercent">0%</p>
+                </div>
+
+            </div>
+
+            <!-- BOARD -->
+            <div class="board">
+
+                <div class="column" id="pending">
+                    <h3>Pending</h3>
+                </div>
+
+                <div class="column" id="progress">
+                    <h3>In Progress</h3>
+                </div>
+
+                <div class="column" id="completed">
+                    <h3>Completed</h3>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ANALYTICS VIEW -->
+        <div id="analyticsView" style="display:none;">
+
+            <h2>Analytics</h2>
+
+            <canvas id="taskChart"></canvas>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- MODAL -->
+<div id="taskModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>Add Task</h2>
+
+        <!-- TASK INPUT -->
+        <input
+            type="text"
+            id="modalTaskInput"
+            placeholder="Task name"
+        >
+
+        <!-- PRIORITY -->
+        <select id="prioritySelect">
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+        </select>
+
+        <!-- DUE DATE -->
+        <input type="date" id="dueDate">
+
+        <!-- ACTIONS -->
+        <div class="modal-actions">
+
+            <button id="addTaskConfirm">Add</button>
+            <button id="closeModalBtn">Cancel</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- JS -->
+<script src="../assets/js/dashboard.js"></script>
+
+</body>
+</html>

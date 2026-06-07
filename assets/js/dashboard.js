@@ -1,3 +1,11 @@
+const currentUser =
+    JSON.parse(localStorage.getItem("currentUser"));
+
+if (!currentUser) {
+    window.location.href = "login.html";
+}
+
+/* ---------- ELEMENTS ---------- */
 const openModalBtn = document.getElementById("saveTaskBtn");
 const taskModal = document.getElementById("taskModal");
 const modalTaskInput = document.getElementById("modalTaskInput");
@@ -7,22 +15,31 @@ const closeModalBtn = document.getElementById("closeModalBtn");
 const searchInput = document.getElementById("searchInput");
 const darkModeBtn = document.getElementById("darkModeBtn");
 const prioritySelect = document.getElementById("prioritySelect");
+const dueDateInput = document.getElementById("dueDate");
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-/* SAVE */
+/* ---------- STORAGE ---------- */
 function saveTasks() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-/* SYNC */
+/* ---------- INIT ---------- */
+function initUser() {
+    const el = document.getElementById("welcomeUser");
+    if (el) {
+        el.textContent = "Welcome, " + currentUser.name;
+    }
+}
+
+/* ---------- SYNC ---------- */
 function sync() {
     saveTasks();
     renderBoard();
     updateCards();
 }
 
-/* VIEW SWITCH */
+/* ---------- VIEW SWITCH ---------- */
 function showView(view) {
 
     document.getElementById("dashboardView").style.display =
@@ -31,15 +48,17 @@ function showView(view) {
     document.getElementById("analyticsView").style.display =
         view === "analytics" ? "block" : "none";
 
-    if (view === "analytics") renderChart();
+    if (view === "analytics") {
+        renderChart();
+    }
 }
 
-/* DARK MODE */
+/* ---------- DARK MODE ---------- */
 darkModeBtn?.addEventListener("click", () => {
     document.body.classList.toggle("dark");
 });
 
-/* SEARCH */
+/* ---------- SEARCH ---------- */
 searchInput?.addEventListener("input", (e) => {
 
     const value = e.target.value.toLowerCase();
@@ -51,12 +70,11 @@ searchInput?.addEventListener("input", (e) => {
     renderBoard(filtered);
 });
 
-/* OPEN MODAL */
+/* ---------- MODAL ---------- */
 openModalBtn.addEventListener("click", () => {
     taskModal.style.display = "flex";
 });
 
-/* CLOSE MODAL */
 closeModalBtn.addEventListener("click", () => {
     taskModal.style.display = "none";
 });
@@ -67,7 +85,7 @@ window.addEventListener("click", (e) => {
     }
 });
 
-/* ADD TASK */
+/* ---------- ADD TASK ---------- */
 addTaskConfirm.addEventListener("click", () => {
 
     const text = modalTaskInput.value.trim();
@@ -75,18 +93,23 @@ addTaskConfirm.addEventListener("click", () => {
     if (!text) return;
 
     tasks.push({
+        id: Date.now(),
         name: text,
         status: "Pending",
-        priority: prioritySelect.value
+        priority: prioritySelect.value,
+        dueDate: dueDateInput ? dueDateInput.value : "",
+        createdAt: new Date().toISOString()
     });
 
     modalTaskInput.value = "";
+    if (dueDateInput) dueDateInput.value = "";
+
     taskModal.style.display = "none";
 
     sync();
 });
 
-/* ACTIONS */
+/* ---------- ACTIONS ---------- */
 function completeTask(i) {
     tasks[i].status = "Completed";
     sync();
@@ -95,7 +118,7 @@ function completeTask(i) {
 function editTask(i) {
     const v = prompt("Edit task", tasks[i].name);
     if (!v) return;
-    tasks[i].name = v;
+    tasks[i].name = v.trim();
     sync();
 }
 
@@ -104,7 +127,7 @@ function deleteTask(i) {
     sync();
 }
 
-/* RENDER */
+/* ---------- RENDER BOARD ---------- */
 function renderBoard(data = tasks) {
 
     const pending = document.getElementById("pending");
@@ -120,9 +143,36 @@ function renderBoard(data = tasks) {
         const div = document.createElement("div");
         div.className = "task";
 
+        const today = new Date();
+        const overdue =
+            t.dueDate &&
+            new Date(t.dueDate) < today &&
+            t.status !== "Completed";
+
+        if (overdue) {
+            div.style.borderLeft = "5px solid red";
+        }
+
         div.innerHTML = `
             <h4>${t.name}</h4>
-            <small>${t.status} | ${t.priority}</small>
+
+            <small>${t.status}</small>
+
+            <br>
+
+            <small>📅 ${t.dueDate || "No Date"}</small>
+
+            <br>
+
+            <span class="priority ${t.priority.toLowerCase()}">
+                ${t.priority}
+            </span>
+
+            <div>
+                <button onclick="completeTask(${i})">✔</button>
+                <button onclick="editTask(${i})">✏</button>
+                <button onclick="deleteTask(${i})">🗑</button>
+            </div>
         `;
 
         if (t.status === "Pending") pending.appendChild(div);
@@ -131,26 +181,37 @@ function renderBoard(data = tasks) {
     });
 }
 
-/* CARDS */
+/* ---------- CARDS ---------- */
 function updateCards() {
 
     const total = tasks.length;
     const completed = tasks.filter(t => t.status === "Completed").length;
     const pending = tasks.filter(t => t.status === "Pending").length;
 
+    const progressPercent =
+        total === 0 ? 0 : Math.round((completed / total) * 100);
+
     const cards = document.querySelectorAll(".card p");
 
-    cards[0].textContent = total;
-    cards[1].textContent = completed;
-    cards[2].textContent = pending;
+    if (cards.length >= 3) {
+        cards[0].textContent = total;
+        cards[1].textContent = completed;
+        cards[2].textContent = pending;
+    }
+
+    const progressEl = document.getElementById("progressPercent");
+    if (progressEl) {
+        progressEl.textContent = progressPercent + "%";
+    }
 }
 
-/* EXPORT */
+/* ---------- EXPORT ---------- */
 function exportTasks() {
 
-    const blob = new Blob([JSON.stringify(tasks, null, 2)], {
-        type: "application/json"
-    });
+    const blob = new Blob(
+        [JSON.stringify(tasks, null, 2)],
+        { type: "application/json" }
+    );
 
     const url = URL.createObjectURL(blob);
 
@@ -160,12 +221,18 @@ function exportTasks() {
     a.click();
 }
 
-/* CHART */
+/* ---------- CHART ---------- */
+let chartInstance = null;
+
 function renderChart() {
 
     const ctx = document.getElementById("taskChart");
 
-    new Chart(ctx, {
+    if (!ctx) return;
+
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(ctx, {
         type: "bar",
         data: {
             labels: ["Pending", "Completed"],
@@ -180,5 +247,12 @@ function renderChart() {
     });
 }
 
-/* INIT */
+/* ---------- LOGOUT ---------- */
+function logout() {
+    localStorage.removeItem("currentUser");
+    window.location.href = "login.html";
+}
+
+/* ---------- START ---------- */
+initUser();
 sync();

@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Register</title>
 
 <link rel="stylesheet" href="../assets/css/style.css">
 <link rel="stylesheet" href="../assets/css/auth.css">
-
 </head>
+
 <body>
 
 <div class="auth-container">
@@ -18,17 +17,13 @@
 
         <h2>Register</h2>
 
-        <form>
+        <input type="text" id="name" placeholder="Full Name">
 
-            <input type="text" placeholder="Full Name" required>
+        <input type="email" id="email" placeholder="Email">
 
-            <input type="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password">
 
-            <input type="password" placeholder="Password" required>
-
-            <button type="submit">Register</button>
-
-        </form>
+        <button id="registerBtn">Register</button>
 
         <p>
             Already have an account?
@@ -38,6 +33,8 @@
     </div>
 
 </div>
+
+<script src="../assets/js/auth.js"></script>
 
 </body>
 </html>
