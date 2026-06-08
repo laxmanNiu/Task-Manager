@@ -1,7 +1,13 @@
-body {
+body{
     margin: 0;
-    font-family: Arial;
-    background: #eef2f7;
+    font-family: Arial, sans-serif; 
+    background: linear-gradient(
+        135deg,
+        #3a1572,
+        #030775,
+        #3f106b
+    );
+    min-height: 100vh;
 }
 
 /* LAYOUT */
@@ -32,10 +38,12 @@ body {
 }
 
 /* TOPBAR */
-.topbar {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+.topbar{
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 12px;
+    color: white;
 }
 
 /* CARDS */
@@ -45,11 +53,17 @@ body {
     margin: 20px 0;
 }
 
-.card {
-    background: white;
-    padding: 15px;
-    flex: 1;
-    border-radius: 10px;
+.card{
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 15px;
+    padding: 20px;
+    color: white;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+.card:hover{
+    transform: translateY(-5px);
+    transition: 0.3s;
 }
 
 /* BOARD */
@@ -112,4 +126,36 @@ body.dark .column,
 body.dark .task {
     background: #1f2937;
     color: white;
+}
+/* Buttons */
+
+button{
+    background: #8b5cf6;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+button:hover{
+    background: #7c3aed;
+}
+table{
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th,
+td{
+    padding: 12px;
+    text-align: left;
+}
+*{
+    transition: all 0.3s ease;
 }
